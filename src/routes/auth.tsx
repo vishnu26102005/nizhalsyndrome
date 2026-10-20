@@ -44,6 +44,7 @@ function AuthPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -52,6 +53,7 @@ function AuthPage() {
     e.preventDefault();
     setError(null);
     setNotice(null);
+    if (mode === "signup" && password !== confirm) return setError("Passwords don't match.");
     const parsed = schema.safeParse({ email, password });
     if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? "Check your details.");
     setBusy(true);
@@ -127,6 +129,12 @@ function AuthPage() {
                   <Input id="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} className="h-11 rounded-none" required minLength={8} />
                   {mode === "signup" && <span className="text-xs text-muted-foreground">At least 8 characters.</span>}
                 </div>
+                {mode === "signup" && (
+                  <div className="grid gap-2">
+                    <Label htmlFor="confirm">Confirm password</Label>
+                    <Input id="confirm" type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="h-11 rounded-none" required />
+                  </div>
+                )}
                 {error && <p role="alert" className="border-l-2 border-destructive pl-3 text-sm text-destructive">{error}</p>}
                 {notice && <p role="status" className="border-l-2 border-blood-bright pl-3 text-sm text-foreground">{notice}</p>}
                 <Button type="submit" variant="blood" size="xl" disabled={busy}>
