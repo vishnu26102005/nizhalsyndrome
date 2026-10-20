@@ -17,6 +17,8 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Create a free reader account to bookmark stories. Reading on Nizhal Syndrome is always free — no account required." },
       { property: "og:title", content: "Join the archive — Nizhal Syndrome" },
       { property: "og:description", content: "Free reader accounts for bookmarking dark comics. No subscriptions, ever." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,

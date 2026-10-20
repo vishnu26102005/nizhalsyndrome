@@ -12,14 +12,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { COMICS, GENRES, filterComics, type Comic } from "@/lib/comics";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { ebooksQuery } from "@/lib/ebook-queries";
+import { isEbook, toComic } from "@/lib/ebooks";
+import { useEbookSession } from "@/components/site/EbookSession";
 
 export const Route = createFileRoute("/")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(ebooksQuery),
   head: () => ({
     meta: [
       { title: "Nizhal Syndrome — An Underground Horror Comic Archive" },
       { name: "description", content: "Psychological horror, twisted revenge and manga-inspired thrillers. An independent archive of original dark comics." },
       { property: "og:title", content: "Nizhal Syndrome — Every Shadow Has a Story" },
       { property: "og:description", content: "An underground archive of original psychological horror and manga thriller comics." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
@@ -33,15 +40,20 @@ function Index() {
   const [sort, setSort] = useState<keyof typeof SORTS>("featured");
   const [active, setActive] = useState<Comic | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const { data: publication } = useSuspenseQuery(ebooksQuery);
+  const queryClient = useQueryClient();
+  const { demos, removeDemo } = useEbookSession();
+  const archive = useMemo(() => [...demos, ...publication.ebooks.map(toComic), ...COMICS], [demos, publication.ebooks]);
 
   const list = useMemo(() => {
-    const r = filterComics(COMICS, query, genre);
+    const r = filterComics(archive, query, genre);
     if (sort === "az") return [...r].sort((a, b) => a.title.localeCompare(b.title));
     if (sort === "status") return [...r].sort((a, b) => (a.status === b.status ? 0 : a.status === "Ongoing" ? -1 : 1));
     return r;
-  }, [query, genre, sort]);
+  }, [archive, query, genre, sort]);
 
-  const featured = COMICS[0]!;
+  const featured = COMICS[0];
+  if (!featured) return null;
   const focusSearch = () => {
     document.getElementById("library")?.scrollIntoView({ behavior: "smooth" });
     setTimeout(() => searchRef.current?.focus({ preventScroll: true }), 500);
@@ -153,7 +165,7 @@ function Index() {
                 <h2 id="lib-h" className="mt-4 font-display text-6xl md:text-8xl">The library</h2>
               </div>
               <p className="max-w-xs font-mono text-[11px] uppercase leading-relaxed tracking-widest text-muted-foreground">
-                Sample entries for demonstration. Covers and synopses are original; no books are downloadable yet.
+                Published ebooks are free — no signup. Sample stories and session demos are labelled separately.
               </p>
             </div>
 
@@ -182,6 +194,7 @@ function Index() {
             <p role="status" aria-live="polite" className="mt-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
               {list.length} {list.length === 1 ? "file" : "files"} recovered
             </p>
+            {publication.error && <div role="alert" className="mt-4 flex flex-wrap items-center gap-3 text-destructive"><p>{publication.error}</p><Button variant="bone" onClick={() => queryClient.invalidateQueries({ queryKey: ebooksQuery.queryKey })}>Retry library</Button></div>}
 
             {list.length === 0 ? (
               <div className="mt-10 border border-dashed border-border p-16 text-center">
@@ -203,14 +216,16 @@ function Index() {
                             {c.mature && <span className="border border-blood-bright bg-background/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-blood-bright">18+</span>}
                           </div>
                           <span className="absolute bottom-3 left-3 font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/80">{c.issue}</span>
-                          <span className="absolute bottom-1 right-3 font-display text-6xl text-foreground/15">0{COMICS.indexOf(c) + 1}</span>
+                          <span className="absolute bottom-1 right-3 font-display text-6xl text-foreground/15">{String(i + 1).padStart(2, "0")}</span>
                         </div>
                         <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.25em] text-blood-bright">{c.genre}</p>
                         <h3 className="mt-2 font-display text-4xl">{c.title}</h3>
                         <p className="mt-2 text-muted-foreground">{c.blurb}</p>
+                        <p className="mt-2 font-mono text-[11px] uppercase text-muted-foreground">{isEbook(c) ? c.demo ? "Session demo · not public or persisted" : "Published · free for everyone" : "Sample story · pages not published"}</p>
                         <div className="mt-4 flex flex-wrap gap-2">
                           <Button asChild variant="blood"><Link to="/comics/$id" params={{ id: c.id }} aria-label={`Read ${c.title} free`}>Read free</Link></Button>
                           <Button variant="bone" onClick={() => setActive(c)} aria-label={`Read details for ${c.title}`}>Read details <ArrowUpRight /></Button>
+                          {isEbook(c) && c.demo && <Button variant="ghost" onClick={() => removeDemo(c.id)} aria-label={`Remove session demo ${c.title}`}>Remove demo</Button>}
                         </div>
                       </article>
                     </Reveal>
@@ -223,7 +238,7 @@ function Index() {
 
         {/* READ THE DARKNESS */}
         <section aria-labelledby="dark-h" className="relative mt-16 overflow-hidden border-y border-blood/60">
-          <img src={COMICS[4]!.cover} alt="" width={768} height={1024} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+          <img src={COMICS[4]?.cover} alt="" width={768} height={1024} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-blood/40" />
           <div className="absolute inset-0 scanlines opacity-50" />
           <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-8 px-5 py-28 md:flex-row md:items-end md:justify-between md:px-8">
