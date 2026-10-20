@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ComicsIdRouteImport } from './routes/comics.$id'
+import { Route as ApiPublicEbooksRouteImport } from './routes/api/public/ebooks'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const ComicsIdRoute = ComicsIdRouteImport.update({
   path: '/comics/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEbooksRoute = ApiPublicEbooksRouteImport.update({
+  id: '/api/public/ebooks',
+  path: '/api/public/ebooks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/comics/$id': typeof ComicsIdRoute
+  '/api/public/ebooks': typeof ApiPublicEbooksRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/comics/$id': typeof ComicsIdRoute
+  '/api/public/ebooks': typeof ApiPublicEbooksRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/comics/$id': typeof ComicsIdRoute
+  '/api/public/ebooks': typeof ApiPublicEbooksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/comics/$id'
+  fullPaths: '/' | '/auth' | '/comics/$id' | '/api/public/ebooks'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/comics/$id'
-  id: '__root__' | '/' | '/auth' | '/comics/$id'
+  to: '/' | '/auth' | '/comics/$id' | '/api/public/ebooks'
+  id: '__root__' | '/' | '/auth' | '/comics/$id' | '/api/public/ebooks'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ComicsIdRoute: typeof ComicsIdRoute
+  ApiPublicEbooksRoute: typeof ApiPublicEbooksRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComicsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ebooks': {
+      id: '/api/public/ebooks'
+      path: '/api/public/ebooks'
+      fullPath: '/api/public/ebooks'
+      preLoaderRoute: typeof ApiPublicEbooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ComicsIdRoute: ComicsIdRoute,
+  ApiPublicEbooksRoute: ApiPublicEbooksRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

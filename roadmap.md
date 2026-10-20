@@ -1,0 +1,4 @@
+- [x] Add validated authenticated publishing adapter and public ebook reads.
+- [x] Add upload preview, publish/demo states, session library and reader.
+- [x] Test validation and browser demo flow; document connection requirements.
+- [ ] Connect real MongoDB/file publishing — blocked on the external creator service URL, server API key, and creator-role setup.
