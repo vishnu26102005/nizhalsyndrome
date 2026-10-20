@@ -106,7 +106,7 @@
 @utility shadow-blood { box-shadow: var(--shadow-blood); }
 
 @utility torn-bottom {
-  clip-path: polygon(0 0,100% 0,100% 92%,96% 96%,91% 91%,85% 97%,78% 92%,70% 98%,62% 93%,55% 97%,47% 91%,39% 96%,31% 92%,22% 98%,14% 92%,7% 97%,0 93%);
+  clip-path: polygon(0 0,100% 0,100% calc(100% - 48px),96% calc(100% - 24px),91% calc(100% - 54px),85% calc(100% - 18px),78% calc(100% - 48px),70% calc(100% - 12px),62% calc(100% - 42px),55% calc(100% - 18px),47% calc(100% - 54px),39% calc(100% - 24px),31% calc(100% - 48px),22% calc(100% - 12px),14% calc(100% - 48px),7% calc(100% - 18px),0 calc(100% - 42px));
 }
 @utility panel-cut { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%); }
 
