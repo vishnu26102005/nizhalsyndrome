@@ -1,0 +1,3 @@
+- [ ] Add validated authenticated publishing adapter and public ebook reads.
+- [ ] Add upload preview, publish/demo states, session library and reader.
+- [ ] Test validation and browser demo flow; document connection requirements.
