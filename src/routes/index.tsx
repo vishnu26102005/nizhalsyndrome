@@ -8,6 +8,7 @@ import { ComicDialog } from "@/components/site/ComicDialog";
 import { Upload } from "@/components/site/Upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { COMICS, GENRES, filterComics, type Comic } from "@/lib/comics";
 
 export const Route = createFileRoute("/")({
@@ -295,5 +296,3 @@ function Index() {
     </div>
   );
 }
-
-import { Label } from "@/components/ui/label";
