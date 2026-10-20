@@ -41,7 +41,7 @@ function Index() {
     return r;
   }, [query, genre, sort]);
 
-  const featured = COMICS[0];
+  const featured = COMICS[0]!;
   const focusSearch = () => {
     document.getElementById("library")?.scrollIntoView({ behavior: "smooth" });
     setTimeout(() => searchRef.current?.focus({ preventScroll: true }), 500);
@@ -223,7 +223,7 @@ function Index() {
 
         {/* READ THE DARKNESS */}
         <section aria-labelledby="dark-h" className="relative mt-16 overflow-hidden border-y border-blood/60">
-          <img src={COMICS[4].cover} alt="" width={768} height={1024} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+          <img src={COMICS[4]!.cover} alt="" width={768} height={1024} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-blood/40" />
           <div className="absolute inset-0 scanlines opacity-50" />
           <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-8 px-5 py-28 md:flex-row md:items-end md:justify-between md:px-8">
