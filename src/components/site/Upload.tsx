@@ -83,6 +83,8 @@ export function Upload() {
         body.set("file", input.file);
         const response = await fetch("/api/public/ebooks", { method: "POST", headers: { Authorization: `Bearer ${data.session.access_token}` }, body, signal: AbortSignal.timeout(130000) });
         const payload = await response.json();
+        const failure = z.object({ success: z.literal(false), error: z.string() }).safeParse(payload);
+        if (failure.success) throw new Error(failure.data.error);
         if (!response.ok) throw new Error(z.object({ error: z.string() }).safeParse(payload).data?.error ?? "Publishing failed. Check the backend and file storage connection.");
         const parsed = z.object({ ebook: ebookSchema }).safeParse(payload);
         if (!parsed.success) throw new Error("The backend did not confirm a stored, published ebook. Refresh the library before retrying.");
