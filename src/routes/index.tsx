@@ -285,7 +285,7 @@ function Index() {
             <h3 className="font-mono text-xs uppercase tracking-[0.25em] text-blood-bright">Contact</h3>
             <ul className="mt-4 space-y-2">
               <li><a href="mailto:vishnuvardan26102005@gmail.com" className="break-all hover:text-blood-bright">vishnuvardan26102005@gmail.com</a></li>
-              <li><a href="https://www.instagram.com/nizhal_syndrome?utm_source=ig_web_button_share_sheet&mdxt=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="hover:text-blood-bright">Instagram · @nizhal_syndrome <span className="sr-only">(opens in new tab)</span>↗</a></li>
+              <li><a href="https://www.instagram.com/nizhal_syndrome?utm_source=ig_web_button_share_sheet&mdxt=ZDNlZDc0MzIxNw%3D%3D" target="_blank" rel="noopener noreferrer" className="hover:text-blood-bright">@nizhal_syndrome <span className="sr-only">(opens in new tab)</span>↗</a></li>
               <li><Link to="/auth" className="text-muted-foreground hover:text-blood-bright">Reader account (optional)</Link></li>
             </ul>
           </div>
