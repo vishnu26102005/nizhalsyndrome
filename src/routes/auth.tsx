@@ -32,6 +32,7 @@ function friendly(msg: string) {
   if (m.includes("invalid login")) return "That email and password don't match. Try again.";
   if (m.includes("already registered")) return "An account with this email already exists. Sign in instead.";
   if (m.includes("not confirmed")) return "Please confirm your email first — check your inbox for the link.";
+  if (m.includes("not allowed") || m.includes("invalid") && m.includes("email")) return "That email address can't receive mail. Please use a real, correctly spelled address.";
   if (m.includes("rate")) return "Too many attempts. Wait a minute and try again.";
   if (m.includes("weak") || m.includes("pwned")) return "That password is too easy to guess. Choose a stronger one.";
   return "Something went wrong. Please try again.";
