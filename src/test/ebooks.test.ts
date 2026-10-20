@@ -1,0 +1,20 @@
+import { describe, expect, it } from "vitest";
+import { draftSchema, ebookSchema, ebookFormat } from "@/lib/ebooks";
+import { validateComicFile, MAX_BYTES } from "@/lib/comics";
+const draft = { title: "Nightfall", genre: "Mystery", synopsis: "A missing shadow returns." };
+const ebook = { ...draft, id: "nightfall", status: "published", fileUrl: "https://files.example.org/nightfall.pdf", storageKey: "ebooks/nightfall.pdf", fileName: "nightfall.pdf", fileSize: 100 };
+describe("ebook publishing rules", () => {
+  it("requires a nonblank title", () => expect(draftSchema.safeParse({ ...draft, title: "  " }).success).toBe(false));
+  it("requires a supported genre", () => expect(draftSchema.safeParse({ ...draft, genre: "All" }).success).toBe(false));
+  it("requires a nonblank synopsis", () => expect(draftSchema.safeParse({ ...draft, synopsis: " " }).success).toBe(false));
+  it.each(["PDF", "EPUB", "CBZ", "CBR", "ZIP"])("accepts %s at 50 MB", (ext) => expect(validateComicFile({ name: `ebook.${ext}`, size: MAX_BYTES })).toBeNull());
+  it("rejects a file above 50 MB", () => expect(validateComicFile({ name: "ebook.pdf", size: MAX_BYTES + 1 })).not.toBeNull());
+  it("rejects an empty file", () => expect(validateComicFile({ name: "ebook.pdf", size: 0 })).not.toBeNull());
+  it("rejects unsupported extensions", () => expect(validateComicFile({ name: "ebook.html", size: 100 })).not.toBeNull());
+  it("accepts confirmed published metadata", () => expect(ebookSchema.safeParse(ebook).success).toBe(true));
+  it("rejects an unpublished backend result", () => expect(ebookSchema.safeParse({ ...ebook, status: "draft" }).success).toBe(false));
+  it("requires a stored file key", () => expect(ebookSchema.safeParse({ ...ebook, storageKey: "" }).success).toBe(false));
+  it("rejects local blob URLs as public publications", () => expect(ebookSchema.safeParse({ ...ebook, fileUrl: "blob:http://localhost/id" }).success).toBe(false));
+  it("rejects an unsupported persisted ebook", () => expect(ebookSchema.safeParse({ ...ebook, fileName: "ebook.exe" }).success).toBe(false));
+  it("detects browser PDF format", () => expect(ebookFormat("Night.PDF")).toBe("pdf"));
+});
