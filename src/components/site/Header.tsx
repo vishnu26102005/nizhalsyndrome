@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Menu, Search, X } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { Logo } from "./Logo";
+import { useSession } from "@/hooks/use-session";
 
 const LINKS = [
   { href: "#discover", label: "Discover" },
@@ -18,6 +21,7 @@ export function Wordmark({ className = "" }: { className?: string }) {
 
 export function Header({ onSearch }: { onSearch: () => void }) {
   const [open, setOpen] = useState(false);
+  const { user } = useSession();
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const f = () => setScrolled(window.scrollY > 40);
@@ -36,7 +40,7 @@ export function Header({ onSearch }: { onSearch: () => void }) {
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${scrolled || open ? "border-b border-border bg-background/90 backdrop-blur" : ""}`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-8">
-        <a href="#top" aria-label="Nizhal Syndrome home"><Wordmark /></a>
+        <a href="#top" aria-label="Nizhal Syndrome home" className="flex items-center gap-2"><Logo className="size-9 md:size-11" /><Wordmark className="hidden text-xl sm:inline md:text-2xl" /></a>
         <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
           {LINKS.map((l) => (
             <a key={l.href} href={l.href} className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground transition-colors hover:text-foreground">
@@ -48,6 +52,7 @@ export function Header({ onSearch }: { onSearch: () => void }) {
           <Button variant="ghost" size="icon" aria-label="Search the library" onClick={onSearch}>
             <Search className="size-5" />
           </Button>
+          <Link to="/auth" className="hidden font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground lg:inline">{user ? "Account" : "Sign in"}</Link>
           <Button asChild variant="blood" className="hidden sm:inline-flex">
             <a href="#library">Enter the Archive</a>
           </Button>
@@ -63,6 +68,7 @@ export function Header({ onSearch }: { onSearch: () => void }) {
               <span className="font-mono text-xs text-blood-bright">0{i + 1}</span>{l.label}
             </a>
           ))}
+          <Link to="/auth" onClick={() => setOpen(false)} className="mt-6 block font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">{user ? "Your account" : "Sign in / Sign up (optional)"}</Link>
           <Button asChild variant="blood" className="mt-6 w-full">
             <a href="#library" onClick={() => setOpen(false)}>Enter the Archive</a>
           </Button>

@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { Comic } from "@/lib/comics";
 
@@ -30,6 +32,7 @@ export function ComicDialog({ comic, onClose }: { comic: Comic | null; onClose: 
               <p className="mt-5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
                 Sample archive entry · no downloadable book attached yet
               </p>
+              <Button asChild variant="blood" className="mt-5"><Link to="/comics/$id" params={{ id: comic.id }}>Open reader page · free</Link></Button>
             </div>
           </div>
         )}

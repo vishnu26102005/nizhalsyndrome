@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowUpRight, Search } from "lucide-react";
 import hero from "@/assets/hero.jpg";
+import { Link } from "@tanstack/react-router";
 import { Header, Wordmark } from "@/components/site/Header";
+import { Logo } from "@/components/site/Logo";
 import { Reveal } from "@/components/site/Reveal";
 import { ComicDialog } from "@/components/site/ComicDialog";
 import { Upload } from "@/components/site/Upload";
@@ -39,7 +41,7 @@ function Index() {
     return r;
   }, [query, genre, sort]);
 
-  const featured = COMICS[0];
+  const featured = COMICS[0]!;
   const focusSearch = () => {
     document.getElementById("library")?.scrollIntoView({ behavior: "smooth" });
     setTimeout(() => searchRef.current?.focus({ preventScroll: true }), 500);
@@ -206,7 +208,10 @@ function Index() {
                         <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.25em] text-blood-bright">{c.genre}</p>
                         <h3 className="mt-2 font-display text-4xl">{c.title}</h3>
                         <p className="mt-2 text-muted-foreground">{c.blurb}</p>
-                        <Button variant="bone" className="mt-4" onClick={() => setActive(c)} aria-label={`Read details for ${c.title}`}>Read details <ArrowUpRight /></Button>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <Button asChild variant="blood"><Link to="/comics/$id" params={{ id: c.id }} aria-label={`Read ${c.title} free`}>Read free</Link></Button>
+                          <Button variant="bone" onClick={() => setActive(c)} aria-label={`Read details for ${c.title}`}>Read details <ArrowUpRight /></Button>
+                        </div>
                       </article>
                     </Reveal>
                   </li>
@@ -218,7 +223,7 @@ function Index() {
 
         {/* READ THE DARKNESS */}
         <section aria-labelledby="dark-h" className="relative mt-16 overflow-hidden border-y border-blood/60">
-          <img src={COMICS[4].cover} alt="" width={768} height={1024} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+          <img src={COMICS[4]!.cover} alt="" width={768} height={1024} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-blood/40" />
           <div className="absolute inset-0 scanlines opacity-50" />
           <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-8 px-5 py-28 md:flex-row md:items-end md:justify-between md:px-8">
@@ -265,7 +270,7 @@ function Index() {
       <footer className="mx-auto max-w-7xl px-5 py-16 md:px-8">
         <div className="grid gap-10 md:grid-cols-[2fr_1fr_1fr]">
           <div>
-            <Wordmark className="text-5xl md:text-7xl" />
+            <div className="flex items-center gap-4"><Logo className="size-16 md:size-24" /><Wordmark className="text-4xl md:text-6xl" /></div>
             <p className="mt-4 max-w-sm text-muted-foreground">An underground comic archive. Every shadow has a story.</p>
           </div>
           <nav aria-label="Footer">
@@ -276,18 +281,18 @@ function Index() {
               ))}
             </ul>
           </nav>
-          <div>
-            <h3 className="font-mono text-xs uppercase tracking-[0.25em] text-blood-bright">Follow the shadow</h3>
-            <ul className="mt-4 space-y-2 text-muted-foreground">
-              {["Instagram", "X / Twitter", "Discord"].map((s) => (
-                <li key={s}>{s} <span className="font-mono text-[10px] uppercase tracking-widest">· coming soon</span></li>
-              ))}
+          <div id="contact">
+            <h3 className="font-mono text-xs uppercase tracking-[0.25em] text-blood-bright">Contact</h3>
+            <ul className="mt-4 space-y-2">
+              <li><a href="mailto:vishnuvardan26102005@gmail.com" className="break-all hover:text-blood-bright">vishnuvardan26102005@gmail.com</a></li>
+              <li><a href="https://www.instagram.com/nizhal_syndrome?utm_source=ig_web_button_share_sheet&mdxt=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="hover:text-blood-bright">Instagram · @nizhal_syndrome <span className="sr-only">(opens in new tab)</span>↗</a></li>
+              <li><Link to="/auth" className="text-muted-foreground hover:text-blood-bright">Reader account (optional)</Link></li>
             </ul>
           </div>
         </div>
         <div className="mt-14 h-px bg-blood/60" />
         <p className="mt-6 max-w-3xl text-sm text-muted-foreground">
-          All stories, characters and artwork are works of fiction. Library entries are sample listings for demonstration. Some titles contain mature psychological themes intended for readers 18+.
+          All stories, characters and artwork are works of fiction. Library entries are sample listings for demonstration. Reading is free for everyone — no subscriptions or payments. Some titles contain mature psychological themes intended for readers 18+.
         </p>
         <p className="mt-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">© {new Date().getFullYear()} Nizhal Syndrome. All rights reserved.</p>
       </footer>

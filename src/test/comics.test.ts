@@ -9,5 +9,5 @@ describe("upload validation", () => {
 
 describe("library filter", () => {
   it("filters by genre", () => expect(filterComics(COMICS, "", "Mystery").map((c) => c.id)).toEqual(["nocturne-13", "last-confession"]));
-  it("searches description", () => expect(filterComics(COMICS, "journalist", "All")[0].id).toBe("forbidden-meal"));
+  it("searches description", () => expect(filterComics(COMICS, "journalist", "All")[0]?.id).toBe("forbidden-meal"));
 });
