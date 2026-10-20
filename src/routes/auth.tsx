@@ -53,7 +53,7 @@ function AuthPage() {
     setError(null);
     setNotice(null);
     const parsed = schema.safeParse({ email, password });
-    if (!parsed.success) return setError(parsed.error.issues[0].message);
+    if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? "Check your details.");
     setBusy(true);
     if (mode === "signup") {
       const { data, error } = await supabase.auth.signUp({ ...parsed.data, options: { emailRedirectTo: window.location.origin } });
