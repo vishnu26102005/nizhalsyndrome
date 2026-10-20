@@ -52,7 +52,7 @@ export function Header({ onSearch }: { onSearch: () => void }) {
           <Button variant="ghost" size="icon" aria-label="Search the library" onClick={onSearch}>
             <Search className="size-5" />
           </Button>
-          <Link to="/auth" className="hidden font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground lg:inline">{user ? "Account" : "Sign in"}</Link>
+          <Link to="/auth" className="hidden font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground lg:inline">{user ? "Account / Log out" : "Sign in"}</Link>
           <Button asChild variant="blood" className="hidden sm:inline-flex">
             <a href="#library">Enter the Archive</a>
           </Button>
