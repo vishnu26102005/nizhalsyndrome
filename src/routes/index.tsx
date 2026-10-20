@@ -60,7 +60,7 @@ function Index() {
 
       <main id="main">
         {/* HERO */}
-        <section aria-labelledby="hero-h" className="relative flex min-h-[100svh] items-end overflow-hidden pb-16 pt-28 torn-bottom">
+        <section aria-labelledby="hero-h" className="relative flex min-h-[100svh] items-end overflow-hidden pb-28 pt-28 torn-bottom md:pb-32">
           <img src={hero} alt="A lone figure in a rain-soaked alley beneath a looming shadow with red eyes" width={1920} height={1088} className="absolute inset-0 h-full w-full object-cover object-[65%_center] opacity-80 animate-drift" />
           <div className="absolute inset-0 fade-ink" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
