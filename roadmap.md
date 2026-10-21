@@ -2,3 +2,6 @@
 - [x] Add upload preview, publish/demo states, session library and reader.
 - [x] Test validation and browser demo flow; document connection requirements.
 - [ ] Connect real MongoDB/file publishing — blocked on the external creator service URL, server API key, and creator-role setup.
+- [ ] Provide MongoDB Compass-compatible backend setup and local connection instructions; allow authenticated readers to publish durably across devices.
+- [ ] Add email/Google/phone OTP sign-in and secure super-admin provisioning for the specified owner, without embedded credentials.
+- [ ] Remove session-demo publishing, raise upload limit to 150 MB, centre the brand name, and add the supplied YouTube link without changing the theme.
