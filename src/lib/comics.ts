@@ -112,13 +112,13 @@ export function filterComics(list: Comic[], query: string, genre: string) {
 }
 
 export const ACCEPTED_EXT = [".pdf", ".epub", ".cbz", ".cbr", ".zip"];
-export const MAX_BYTES = 50 * 1024 * 1024;
+export const MAX_BYTES = 150 * 1024 * 1024;
 
 export function validateComicFile(file: { name: string; size: number }): string | null {
   const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
   if (!file.name.includes(".") || !ACCEPTED_EXT.includes(ext))
     return `Unsupported file type. Use ${ACCEPTED_EXT.join(", ")}.`;
-  if (file.size > MAX_BYTES) return "File is larger than the 50MB limit.";
+  if (file.size > MAX_BYTES) return "File is larger than the 150MB limit.";
   if (file.size === 0) return "This file appears to be empty.";
   return null;
 }

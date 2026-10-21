@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { COMICS, filterComics, validateComicFile } from "@/lib/comics";
 
 describe("upload validation", () => {
-  it("accepts a 50MB cbz", () => expect(validateComicFile({ name: "a.CBZ", size: 50 * 1024 * 1024 })).toBeNull());
-  it("rejects files over 50MB", () => expect(validateComicFile({ name: "a.pdf", size: 50 * 1024 * 1024 + 1 })).not.toBeNull());
+  it("accepts a 150MB cbz", () => expect(validateComicFile({ name: "a.CBZ", size: 150 * 1024 * 1024 })).toBeNull());
+  it("rejects files over 150MB", () => expect(validateComicFile({ name: "a.pdf", size: 150 * 1024 * 1024 + 1 })).not.toBeNull());
   it("rejects other extensions", () => expect(validateComicFile({ name: "a.docx", size: 10 })).not.toBeNull());
 });
 

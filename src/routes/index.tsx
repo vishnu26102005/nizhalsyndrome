@@ -15,7 +15,6 @@ import { COMICS, GENRES, filterComics, type Comic } from "@/lib/comics";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { ebooksQuery } from "@/lib/ebook-queries";
 import { isEbook, toComic } from "@/lib/ebooks";
-import { useEbookSession } from "@/components/site/EbookSession";
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(ebooksQuery),
@@ -42,8 +41,7 @@ function Index() {
   const searchRef = useRef<HTMLInputElement>(null);
   const { data: publication } = useSuspenseQuery(ebooksQuery);
   const queryClient = useQueryClient();
-  const { demos, removeDemo } = useEbookSession();
-  const archive = useMemo(() => [...demos, ...publication.ebooks.map(toComic), ...COMICS], [demos, publication.ebooks]);
+  const archive = useMemo(() => [...publication.ebooks.map(toComic), ...COMICS], [publication.ebooks]);
 
   const list = useMemo(() => {
     const r = filterComics(archive, query, genre);
@@ -165,7 +163,7 @@ function Index() {
                 <h2 id="lib-h" className="mt-4 font-display text-6xl md:text-8xl">The library</h2>
               </div>
               <p className="max-w-xs font-mono text-[11px] uppercase leading-relaxed tracking-widest text-muted-foreground">
-                Published ebooks are free — no signup. Sample stories and session demos are labelled separately.
+                Published ebooks are free — no signup. Sample stories are labelled separately.
               </p>
             </div>
 
@@ -221,11 +219,10 @@ function Index() {
                         <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.25em] text-blood-bright">{c.genre}</p>
                         <h3 className="mt-2 font-display text-4xl">{c.title}</h3>
                         <p className="mt-2 text-muted-foreground">{c.blurb}</p>
-                        <p className="mt-2 font-mono text-[11px] uppercase text-muted-foreground">{isEbook(c) ? c.demo ? "Session demo · not public or persisted" : "Published · free for everyone" : "Sample story · pages not published"}</p>
+                        <p className="mt-2 font-mono text-[11px] uppercase text-muted-foreground">{isEbook(c) ? "Published · free for everyone" : "Sample story · pages not published"}</p>
                         <div className="mt-4 flex flex-wrap gap-2">
                           <Button asChild variant="blood"><Link to="/comics/$id" params={{ id: c.id }} aria-label={`Read ${c.title} free`}>Read free</Link></Button>
                           <Button variant="bone" onClick={() => setActive(c)} aria-label={`Read details for ${c.title}`}>Read details <ArrowUpRight /></Button>
-                          {isEbook(c) && c.demo && <Button variant="ghost" onClick={() => removeDemo(c.id)} aria-label={`Remove session demo ${c.title}`}>Remove demo</Button>}
                         </div>
                       </article>
                     </Reveal>
@@ -301,13 +298,14 @@ function Index() {
             <ul className="mt-4 space-y-2">
               <li><a href="mailto:vishnuvardan26102005@gmail.com" className="break-all hover:text-blood-bright">vishnuvardan26102005@gmail.com</a></li>
               <li><a href="https://www.instagram.com/nizhal_syndrome?utm_source=ig_web_button_share_sheet&mdxt=ZDNlZDc0MzIxNw%3D%3D" target="_blank" rel="noopener noreferrer" className="hover:text-blood-bright">@nizhal_syndrome <span className="sr-only">(opens in new tab)</span>↗</a></li>
+              <li><a href="https://youtube.com/@vishnuvardan-1326?si=_xwbH4gmbYtimFN0" target="_blank" rel="noopener noreferrer" className="hover:text-blood-bright">YouTube · @vishnuvardan-1326 ↗</a></li>
               <li><Link to="/auth" className="text-muted-foreground hover:text-blood-bright">Reader account (optional)</Link></li>
             </ul>
           </div>
         </div>
         <div className="mt-14 h-px bg-blood/60" />
         <p className="mt-6 max-w-3xl text-sm text-muted-foreground">
-          All stories, characters and artwork are works of fiction. Library entries are sample listings for demonstration. Reading is free for everyone — no subscriptions or payments. Some titles contain mature psychological themes intended for readers 18+.
+          All stories, characters and artwork are works of fiction. Unpublished sample entries are clearly labelled. Reading is free for everyone — no subscriptions or payments. Some titles contain mature psychological themes intended for readers 18+.
         </p>
         <p className="mt-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">© {new Date().getFullYear()} Nizhal Syndrome. All rights reserved.</p>
       </footer>
