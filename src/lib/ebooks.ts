@@ -20,18 +20,11 @@ export const ebookSchema = draftSchema.extend({
   if (error) ctx.addIssue({ code: z.ZodIssueCode.custom, message: error });
 });
 export type PublishedEbook = z.infer<typeof ebookSchema>;
-export type EbookComic = Comic & { fileUrl: string; fileName: string; demo: boolean; storageKey?: string };
+export type EbookComic = Comic & { fileUrl: string; fileName: string; storageKey?: string };
 export function toComic(ebook: PublishedEbook): EbookComic {
   return { id: ebook.id, title: ebook.title, genre: ebook.genre, synopsis: ebook.synopsis, blurb: ebook.synopsis,
     status: "Complete", issue: "Published ebook", mature: false, tags: [ebook.genre], cover: ebook.coverUrl ?? archiveCover,
-    fileUrl: ebook.fileUrl, fileName: ebook.fileName, storageKey: ebook.storageKey, demo: false };
-}
-export function createDemoComic(draft: z.infer<typeof draftSchema>, file: File): EbookComic {
-  const data = draftSchema.parse(draft);
-  const error = validateComicFile(file);
-  if (error) throw new Error(error);
-  return { ...data, id: `demo-${crypto.randomUUID()}`, blurb: data.synopsis, status: "Complete", issue: "Session demo · not public",
-    mature: false, tags: [data.genre], cover: archiveCover, fileUrl: URL.createObjectURL(file), fileName: file.name, demo: true };
+    fileUrl: ebook.fileUrl, fileName: ebook.fileName, storageKey: ebook.storageKey };
 }
 export function isEbook(comic: Comic): comic is EbookComic { return "fileUrl" in comic; }
 export function ebookFormat(name: string) { return name.split(".").pop()?.toLowerCase() ?? ""; }

@@ -12,17 +12,17 @@ function connection() {
 }
 export async function listEbooks() {
   const config = connection();
-  if (!config) return { configured: false, ebooks: [], error: null };
+  if (!config) return { configured: false, uploadUrl: null, ebooks: [], error: null };
   try {
     const response = await fetch(`${config.url}/v1/ebooks?status=published`, { headers: { "X-API-Key": config.key }, signal: AbortSignal.timeout(15000) });
     if (!response.ok) throw new Error("read failed");
     const result = z.object({ ebooks: z.array(ebookSchema).max(1000) }).parse(await response.json());
-    return { configured: true, ebooks: result.ebooks, error: null };
-  } catch { return { configured: true, ebooks: [], error: "Published ebooks could not be loaded. Please retry." }; }
+    return { configured: true, uploadUrl: `${config.url}/v1/creator/ebooks`, ebooks: result.ebooks, error: null };
+  } catch { return { configured: true, uploadUrl: `${config.url}/v1/creator/ebooks`, ebooks: [], error: "Published ebooks could not be loaded. Please retry." }; }
 }
 export async function publishEbook(request: Request) {
   const config = connection();
-  if (!config) return publishingUnavailable("Publishing is not configured. MongoDB publishing API and file storage connection are required. Use the labelled session demo instead.", 503);
+  if (!config) return publishingUnavailable("Publishing is not configured. MongoDB publishing API and permanent file storage are required. Nothing has been published.", 503);
   const token = request.headers.get("Authorization")?.match(/^Bearer (\S+)$/)?.[1];
   if (!token) return Response.json({ error: "Sign in with a creator or admin account to publish." }, { status: 401 });
   const url = process.env['SUPABASE_URL'];
@@ -32,7 +32,7 @@ export async function publishEbook(request: Request) {
   const auth = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data, error } = await auth.auth.getUser(token);
   if (error || !data.user) return Response.json({ error: "Your session expired. Sign in again." }, { status: 401 });
-  if (Number(request.headers.get("content-length") ?? 0) > MAX_BYTES + 1024 * 1024) return Response.json({ error: "File is larger than the 50MB limit." }, { status: 413 });
+   if (Number(request.headers.get("content-length") ?? 0) > MAX_BYTES + 1024 * 1024) return Response.json({ error: "File is larger than the 150MB limit." }, { status: 413 });
     // The trusted creator API must verify this bearer and creator/admin role before storing any file.
     const authorization = await fetch(`${config.url}/v1/creator/access`, { headers: { Authorization: `Bearer ${token}`, "X-API-Key": config.key }, signal: AbortSignal.timeout(15000) });
     if (authorization.status === 401 || authorization.status === 403) return Response.json({ error: "This account does not have creator/admin publishing access." }, { status: 403 });

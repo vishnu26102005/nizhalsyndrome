@@ -7,14 +7,13 @@ import { COMICS } from "@/lib/comics";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ebooksQuery } from "@/lib/ebook-queries";
 import { isEbook, toComic } from "@/lib/ebooks";
-import { useEbookSession } from "@/components/site/EbookSession";
 import { EbookFileView } from "@/components/site/EbookFileView";
 
 export const Route = createFileRoute("/comics/$id")({
   loader: async ({ params, context }) => {
     const publication = await context.queryClient.ensureQueryData(ebooksQuery);
     const comic = publication.ebooks.map(toComic).find((c) => c.id === params.id) ?? COMICS.find((c) => c.id === params.id);
-    if (!comic && !params.id.startsWith("demo-") && !publication.error) throw notFound();
+    if (!comic && !publication.error) throw notFound();
     return comic ?? null;
   },
   head: ({ loaderData }) => ({
@@ -27,7 +26,7 @@ export const Route = createFileRoute("/comics/$id")({
           { property: "og:type", content: "article" },
           { name: "twitter:card", content: "summary_large_image" },
         ]
-       : [{ title: "Ebook reader — Nizhal Syndrome" }, { name: "description", content: "Read free ebooks in the Nizhal Syndrome archive." }, { property: "og:title", content: "Ebook reader — Nizhal Syndrome" }, { property: "og:description", content: "Free ebook reading. Session demos are not public or persisted." }, { property: "og:type", content: "article" }, { name: "twitter:card", content: "summary_large_image" }, { name: "robots", content: "noindex" }],
+       : [{ title: "Ebook reader — Nizhal Syndrome" }, { name: "description", content: "Read free ebooks in the Nizhal Syndrome archive." }, { property: "og:title", content: "Ebook reader — Nizhal Syndrome" }, { property: "og:description", content: "Public ebooks, free to read without an account." }, { property: "og:type", content: "article" }, { name: "twitter:card", content: "summary_large_image" }, { name: "robots", content: "noindex" }],
   }),
   component: Reader,
 });
@@ -35,12 +34,11 @@ export const Route = createFileRoute("/comics/$id")({
 function Reader() {
   const initial = Route.useLoaderData();
   const { id } = Route.useParams();
-  const { demos } = useEbookSession();
   const { data, refetch, isFetching } = useSuspenseQuery(ebooksQuery);
-  const c = demos.find((comic) => comic.id === id) ?? data.ebooks.map(toComic).find((comic) => comic.id === id) ?? initial;
+  const c = data.ebooks.map(toComic).find((comic) => comic.id === id) ?? initial;
   if (!c) return <main className="mx-auto max-w-3xl px-5 py-24">
-    <h1 className="font-display text-6xl">{id.startsWith("demo-") ? "Session demo unavailable" : "Ebook unavailable"}</h1>
-    <p role="status" className="mt-4 text-muted-foreground">{id.startsWith("demo-") ? "This ebook was a local session demo, not a public publication. Refreshing or closing its tab removes the file." : data.error ?? "This ebook is not available."}</p>
+    <h1 className="font-display text-6xl">Ebook unavailable</h1>
+    <p role="status" className="mt-4 text-muted-foreground">{data.error ?? "This ebook is not available."}</p>
     <div className="mt-6 flex gap-3"><Button asChild variant="bone"><Link to="/" hash="library">Back to library</Link></Button>{data.error && <Button variant="blood" disabled={isFetching} onClick={() => refetch()}>Retry</Button>}</div>
   </main>;
   return (
@@ -65,7 +63,7 @@ function Reader() {
           <div className="mt-8"><BookmarkButton comicId={c.id} /></div>
 
           {isEbook(c) ? <>
-            <p className="mt-8 border-l-2 border-blood-bright pl-4 text-sm text-muted-foreground">{c.demo ? "Session demo — not publicly published or persisted. This file is available only in this tab until refresh." : "Published ebook · free for everyone. No signup required."}</p>
+            <p className="mt-8 border-l-2 border-blood-bright pl-4 text-sm text-muted-foreground">{"Published ebook · free for everyone. No signup required."}</p>
             <EbookFileView url={c.fileUrl} name={c.fileName} />
           </> : <section aria-labelledby="pages-h" className="mt-12 border border-dashed border-border p-8 text-center">
             <BookOpen className="mx-auto size-8 text-blood-bright" aria-hidden />
